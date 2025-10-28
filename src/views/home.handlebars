@@ -1,0 +1,13 @@
+<h2>Pruebo render</h2>
+{{#if products.length}}
+    {{#each products}}
+        <div>
+            <img class="thumbnails" src={{thumbnails}} alt="">
+            <h2 class="title">{{title}}</h2>
+            <p class="category">{{category}}</p>
+            <p class="price">{{price}}</p>
+        </div>
+    {{/each}}
+{{else}}
+<p>No hay productos cargados momentáneamente</p>
+{{/if}}
