@@ -98,7 +98,7 @@ async(jwt_payload)=>{
 
 const cookieExtractor = (req) => {
     let token = null
-    if(req && cookies) {
+    if(req && req.cookies) {
         token = req.cookies["authCookie"]
     }
 }
