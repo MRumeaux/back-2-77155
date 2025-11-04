@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../utils/index.js";
-import passport, { session } from "passport";
+import passport from "passport";
 //import passport from "passport";
 const router = Router();
 
