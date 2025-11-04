@@ -22,7 +22,7 @@ router.get("/login", (req, res) => {
 // });
 
 router.get("/current", passport.authenticate("jwt", {session:false}), (req, res) => {
-    res.render("/current", {user: req.user.user});
+    res.render("current", {user: req.user.user});
 })
 
 

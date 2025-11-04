@@ -101,8 +101,8 @@ const cookieExtractor = (req) => {
     if(req && req.cookies) {
         token = req.cookies["authCookie"];
         console.log("Token extraído desde cookie:", token);
-
     }
+    return token;
 }
 
 
