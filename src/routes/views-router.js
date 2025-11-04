@@ -11,7 +11,7 @@ router.get("/login", (req, res) => {
     res.render("login", { title: "LOGIN" });
 });
 
-router.get("/profile", (req, res) => {
+router.get("/current", (req, res) => {
     const token = req.cookies.authCookie;
     console.log(`Token desde la cookie:${token}`);
 

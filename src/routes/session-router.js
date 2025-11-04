@@ -99,10 +99,10 @@ router.post("/login", async(req, res) =>{
                     email: userExist.email
                 }
                 const token = generateToken(userPayload);
-                //console.log(token);
+                console.log(token);
                 res.cookie("Authcookie", token, {maxAge: 3600000, httpOnly: true});
                 //res.send({status: "success", message: "login exitoso"})
-                res.redirect("/");
+                res.redirect("/current");
             }
         } else {
             res.status(401).json({message: "Error de credenciales"})
