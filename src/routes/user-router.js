@@ -5,12 +5,12 @@ const router = Router();
 
 
 // GET ALL
-router.get("/", async(res, req) =>{
+router.get("/", async(req, res) =>{
     const users = await userModel.find();
     res.status(200).send({ message: "Todos los usuarios" });
 })
 // GET BY ID
-router.get("/:id", async(res, req) =>{
+router.get("/:id", async(req, res) =>{
     const { id } = req.params;
     const user = await userModel.findById(id);
     res.status(200).send({ message: "Un usuario" });

@@ -15,26 +15,7 @@ passport.authenticate("register", { failureRedirect: "failregister" }),
 async (req, res) => {
     const { first_name, last_name, email, age, password } = req.body;
     const hashed_pass = createHash(password);
-        try {
-            const userExist = await userModel.findOne({email: email});
-            if(userExist){
-                return res.status(400).json({ message: "El correo ya se encuentra registrado." });
-            };
-            const newUser = {
-                first_name,
-                last_name,
-                email,
-                age,
-                password: hashed_pass
-            };
-            await userModel.create(newUser);
-            res.status(201).redirect("/login");
-        } catch (error) {
-            res
-                .status(500)
-                .json({ message: "Error interno de servidor", err: error.message });
-        }
-            
+    res.status(201).redirect("/login");
 });
 
 router.get("/failregister", (req, res) => {
@@ -48,7 +29,6 @@ router.post("/recupero", async(req, res)=> {
     const {email, password} = req.body;
     
     try {
-        //validamos si recibimos todos los campos
         if (!email || !password){
             return res.status(401).send({message: "Ingrese los campos requeridos para completar la solicitud de recupero de cuenta."});
         }
@@ -72,7 +52,6 @@ router.post("/recupero", async(req, res)=> {
 // logout
 router.post("/logout", (req, res) => {
     if (req.session.user) {
-        // Destruimos la session
         req.session.destroy((err) => {
             if (err) return res.status(500).send("Error al cerrar sesión.");
             res.redirect("/");
@@ -99,9 +78,7 @@ router.post("/login", async(req, res) =>{
                     email: userExist.email
                 }
                 const token = generateToken(userPayload);
-                //console.log(token);
                 res.cookie("authCookie", token, {maxAge: 3600000, httpOnly: true});
-                //res.send({status: "success", message: "login exitoso"})
                 res.redirect("/current");
             }
         } else {
