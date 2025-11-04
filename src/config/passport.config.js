@@ -81,12 +81,7 @@ async(jwt_payload)=>{
     }
 }))
 
-const cookieExtractor = (req) => {
-    let token = null
-    if(req && cookies) {
-        token = req.cookies["authCookie"]
-    }
-}
+
 
 // donde irá la futura magia
 
@@ -101,6 +96,12 @@ const cookieExtractor = (req) => {
 
 }
 
+const cookieExtractor = (req) => {
+    let token = null
+    if(req && cookies) {
+        token = req.cookies["authCookie"]
+    }
+}
 
 
 export default initializePassport;
