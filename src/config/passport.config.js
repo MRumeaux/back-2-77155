@@ -99,7 +99,8 @@ async(jwt_payload)=>{
 const cookieExtractor = (req) => {
     let token = null
     if(req && req.cookies) {
-        token = req.cookies["authCookie"]
+        token = req.cookies["authCookie"];
+        console.log("Token extraído desde cookie:", token);
     }
 }
 
