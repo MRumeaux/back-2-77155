@@ -99,8 +99,8 @@ router.post("/login", async(req, res) =>{
                     email: userExist.email
                 }
                 const token = generateToken(userPayload);
-                console.log(token);
-                res.cookie("Authcookie", token, {maxAge: 3600000, httpOnly: true});
+                //console.log(token);
+                res.cookie("authCookie", token, {maxAge: 3600000, httpOnly: true});
                 //res.send({status: "success", message: "login exitoso"})
                 res.redirect("/current");
             }

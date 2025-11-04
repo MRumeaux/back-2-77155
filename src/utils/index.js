@@ -5,7 +5,7 @@ export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSalt
 
 export const isValidPassword = (password, hash) => bcrypt.compareSync(password, hash);
 
-const JWT_SECRET = "secretito123"
+const JWT_SECRET = "secretito123";
 
 export const generateToken = (user) => jwt.sign({user}, JWT_SECRET, {expiresIn:"1h"});
 

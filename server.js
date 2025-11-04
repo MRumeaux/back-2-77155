@@ -31,8 +31,6 @@ app.engine('handlebars', handlebars.engine());
 app.set('views', `${process.cwd()}/src/views`);
 app.set('view engine', 'handlebars');
 
-// second try
-
 app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_LOCAL_URL,

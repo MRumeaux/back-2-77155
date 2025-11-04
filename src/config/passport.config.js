@@ -2,6 +2,12 @@ import passport from "passport";
 import local from "passport-local";
 import userModel from "../models/user-model.js";
 import { createHash, isValidPassword } from "../utils/index.js";
+import jwt from "passport-jwt";
+
+const JWTStrategy = jwt.Strategy, 
+    ExtractJWT = jwt.ExtractJwt;
+
+const JWT_SECRET = "secretito123";
 
 const LocalStrategy = local.Strategy;
 const initializePassport = () => {
@@ -61,7 +67,28 @@ passport.use("login", new LocalStrategy({usernameField: "email"}, async(username
     }
 }))
 
-//donde irá la futura magia
+// jwt strategy
+
+passport.use("jwt", new JWTStrategy({
+    jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+    secretOrKey: JWT_SECRET
+},
+async(jwt_payload)=>{
+    try {
+        return done(null, jwt_payload);
+    } catch (error) {
+        return done(error);
+    }
+}))
+
+const cookieExtractor = (req) => {
+    let token = null
+    if(req && cookies) {
+        token = req.cookies["authCookie"]
+    }
+}
+
+// donde irá la futura magia
 
     passport.serializeUser((user, done) => {
         done(null, user._id);
