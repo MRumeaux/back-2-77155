@@ -1,11 +1,12 @@
 import { Router } from "express";
 import userModel from "../models/user-model.js";
+import { authenticate, authorize } from "../middlewares/auth.js";
 
 const router = Router();
 
 
 // GET ALL
-router.get("/", async(req, res) =>{
+router.get("/", authenticate, authorize("admin"), async (req, res) => {
     const users = await userModel.find();
     res.status(200).send({ users: users });
 })

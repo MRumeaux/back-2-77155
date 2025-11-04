@@ -82,7 +82,6 @@ async(jwt_payload, done)=>{
 }))
 
 
-
 // donde irá la futura magia
 
     passport.serializeUser((user, done) => {
