@@ -73,7 +73,7 @@ passport.use("jwt", new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
     secretOrKey: JWT_SECRET
 },
-async(jwt_payload)=>{
+async(jwt_payload, done)=>{
     try {
         return done(null, jwt_payload);
     } catch (error) {
