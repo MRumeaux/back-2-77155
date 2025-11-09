@@ -11,6 +11,7 @@ const JWT_SECRET = "secretito123";
 
 const LocalStrategy = local.Strategy;
 const initializePassport = () => {
+
     passport.use("register", new LocalStrategy({
         passReqToCallback: true,
         usernameField:"email"
@@ -47,42 +48,39 @@ const initializePassport = () => {
     
 // login
 
-passport.use("login", new LocalStrategy({usernameField: "email"}, async(username, password, done) => {
-    try {
-        if (!username || !password){
-            return res.status(401).send({message: "Ingresar usuario y contraseña para loguearse."});
+    passport.use("login", new LocalStrategy({usernameField: "email"}, async(username, password, done) => {
+        try {
+            if (!username || !password){
+                return res.status(401).send({message: "Ingresar usuario y contraseña para loguearse."});
+            }
+            const user = await userModel.findOne({email: username});
+            if (!user){
+                console.log("No se encontró al usuario solicitado.");
+                return done(null, false);
+            }
+            if(!isValidPassword(user, password)) {
+                console.log("Error de credenciales");
+                return done(null, false)
+            } 
+            return done (null, user)
+        } catch (error) {
+            return done(`Error al intentar loguearse: ${error}`, false);
         }
-        const user = await userModel.findOne({email: username});
-        if (!user){
-            console.log("No se encontró al usuario solicitado.");
-            return done(null, false);
-        }
-        if(!isValidPassword(user, password)) {
-            console.log("Error de credenciales");
-            return done(null, false)
-        } 
-        return done (null, user)
-    } catch (error) {
-        return done(`Error al intentar loguearse: ${error}`, false);
-    }
-}))
+    }))
 
 // jwt strategy
 
-passport.use("jwt", new JWTStrategy({
-    jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-    secretOrKey: JWT_SECRET
-},
-async(jwt_payload, done)=>{
-    try {
-        return done(null, jwt_payload);
-    } catch (error) {
-        return done(error);
-    }
-}))
-
-
-// donde irá la futura magia
+    passport.use("jwt", new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: JWT_SECRET
+    },
+    async(jwt_payload, done)=>{
+        try {
+            return done(null, jwt_payload);
+        } catch (error) {
+            return done(error);
+        }
+    }))
 
     passport.serializeUser((user, done) => {
         done(null, user._id);
