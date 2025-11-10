@@ -10,16 +10,19 @@ router.get("/", authenticateRole, authorizeRole("admin"), async (req, res) => {
     const users = await userModel.find();
     res.status(200).send({ users: users });
 })
+
 // GET BY ID
 router.get("/:id", async(req, res) =>{
     const { id } = req.params;
     const user = await userModel.findById(id);
     res.status(200).send({ user: user });
 })
+
 // POST
 router.post("/", async(req, res) =>{
     res.status(201).send({ message: "Realizar registro en /register" });
 })
+
 // PUT
 router.put("/:id", async(req, res) =>{
     try {
@@ -32,6 +35,7 @@ router.put("/:id", async(req, res) =>{
     }
 
 })
+
 // DELETE
 router.delete("/:id", async(req, res) =>{
     try {

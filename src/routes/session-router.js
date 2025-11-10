@@ -1,6 +1,6 @@
 import { Router } from "express";
 import userModel from "../models/user-model.js";
-import { createHash, generateToken, isValidPassword } from "../utils/index.js";
+import { createHash, generateToken, } from "../utils/index.js";
 import passport from "passport";
 
 
@@ -13,9 +13,7 @@ router.post(
 "/register", 
 passport.authenticate("register", { failureRedirect: "failregister" }), 
 async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body;
-    const hashed_pass = createHash(password);
-    res.status(201).redirect("/login");
+    res.status(201).redirect("/users/login");
 });
 
 router.get("/failregister", (req, res) => {
@@ -24,6 +22,23 @@ router.get("/failregister", (req, res) => {
     .send({ status: "error", message: "Error al registrar el usuario." });
 });
     
+
+// login usuario
+
+router.post("/login", 
+    passport.authenticate("login", { failureRedirect: "faillogin" }), 
+    async(req, res) =>{
+        const token = generateToken(req.user);
+        res.cookie("authCookie", token, {maxAge: 3600000, httpOnly: true});
+        res.status(201).redirect("/users/current");
+})
+
+router.get("/faillogin", (req, res) => {
+    res
+    .status(400)
+    .send({ status: "error", message: "Login failed" });
+});
+
 //recupero de pass
 router.post("/recupero", async(req, res)=> {
     const {email, password} = req.body;
@@ -39,7 +54,7 @@ router.post("/recupero", async(req, res)=> {
         const hashed_pass = createHash(password);
         userFound.password = hashed_pass;
         await userFound.save();
-        res.redirect("/login")
+        res.status(201).redirect("/users/login")
     } catch (error) {
         res
         .status(500)
@@ -54,44 +69,43 @@ router.post("/logout", (req, res) => {
     if (req.session.user) {
         req.session.destroy((err) => {
             if (err) return res.status(500).send("Error al cerrar sesión.");
-            res.redirect("/");
+            res.status(201).redirect("/users");
         })
     }
 })
 
 
-// NUEVO
 
-router.post("/login", async(req, res) =>{
-    const { email, password } = req.body;
+// router.post("/login", async(req, res) =>{
+//     const { email, password } = req.body;
     
-    try {        
-        const userExist = await userModel.findOne({email: email});
-        if (userExist){
-            const ValidPassword = isValidPassword(password, userExist.password);
-            if(ValidPassword) {
-                const userPayload = {
-                    id: userExist._id,
-                    first_name: userExist.first_name,
-                    last_name: userExist.last_name,
-                    age: userExist.age,
-                    email: userExist.email
-                }
-                const token = generateToken(userPayload);
-                res.cookie("authCookie", token, {maxAge: 3600000, httpOnly: true});
-                res.redirect("/current");
-            }
-        } else {
-            res.status(401).json({message: "Error de credenciales"})
-        }
+//     try {        
+//         const userExist = await userModel.findOne({email: email});
+//         if (userExist){
+//             const ValidPassword = isValidPassword(password, userExist.password);
+//             if(ValidPassword) {
+//                 const userPayload = {
+//                     id: userExist._id,
+//                     first_name: userExist.first_name,
+//                     last_name: userExist.last_name,
+//                     age: userExist.age,
+//                     email: userExist.email
+//                 }
+//                 const token = generateToken(userPayload);
+//                 res.cookie("authCookie", token, {maxAge: 3600000, httpOnly: true});
+//                 res.redirect("/users/current");
+//             }
+//         } else {
+//             res.status(401).json({message: "Error de credenciales"})
+//         }
 
-    } catch (error) {
-        res
-        .status(500)
-        .json({ message: "Error interno del servidor.", err: error.message });
-    }
+//     } catch (error) {
+//         res
+//         .status(500)
+//         .json({ message: "Error interno del servidor.", err: error.message });
+//     }
     
-})
+// })
 
 
 export default router;

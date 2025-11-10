@@ -4,12 +4,21 @@ import userModel from "../models/user-model.js";
 import { createHash, isValidPassword } from "../utils/index.js";
 import jwt from "passport-jwt";
 
-const JWTStrategy = jwt.Strategy, 
-    ExtractJWT = jwt.ExtractJwt;
-
 const JWT_SECRET = "secretito123";
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy, 
+    ExtractJWT = jwt.ExtractJwt;
+
+const cookieExtractor = (req) => {
+    let token = null
+    if(req && req.cookies) {
+        token = req.cookies["authCookie"];
+        console.log("Token extraído desde cookie:", token);
+    }
+    return token;
+}
+
 const initializePassport = () => {
 
     passport.use("register", new LocalStrategy({
@@ -51,18 +60,34 @@ const initializePassport = () => {
     passport.use("login", new LocalStrategy({usernameField: "email"}, async(username, password, done) => {
         try {
             if (!username || !password){
-                return res.status(401).send({message: "Ingresar usuario y contraseña para loguearse."});
+                console.log("Ingresar usuario y contraseña para loguearse.");
+                return done(null, false);
             }
-            const user = await userModel.findOne({email: username});
-            if (!user){
+            const userExist = await userModel.findOne({email: username});
+            if (!userExist){
                 console.log("No se encontró al usuario solicitado.");
                 return done(null, false);
             }
-            if(!isValidPassword(user, password)) {
-                console.log("Error de credenciales");
-                return done(null, false)
-            } 
-            return done (null, user)
+            if (userExist){
+                const ValidPassword = isValidPassword(password, userExist.password);
+                if(!ValidPassword) {
+                    console.log("Error de credenciales");
+                    return done(null, false)
+                } 
+                if(ValidPassword) {
+                    const userPayload = {
+                        id: userExist._id,
+                        first_name: userExist.first_name,
+                        last_name: userExist.last_name,
+                        age: userExist.age,
+                        email: userExist.email
+                    }
+                }
+            } else {
+                console.log("Erro de credenciales");
+                return done(null, false);
+            }
+            return done (null, userExist)
         } catch (error) {
             return done(`Error al intentar loguearse: ${error}`, false);
         }
@@ -92,15 +117,5 @@ const initializePassport = () => {
     })
 
 }
-
-const cookieExtractor = (req) => {
-    let token = null
-    if(req && req.cookies) {
-        token = req.cookies["authCookie"];
-        console.log("Token extraído desde cookie:", token);
-    }
-    return token;
-}
-
 
 export default initializePassport;

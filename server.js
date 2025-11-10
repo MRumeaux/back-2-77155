@@ -50,7 +50,7 @@ app.use(passport.session());
 
 app.use("/api/users", userRouter);
 app.use("/api/sessions", sessionRouter);
-app.use('/', viewsRouter);
+app.use('/users', viewsRouter);
 
 
 // mid rutas inexistentes
