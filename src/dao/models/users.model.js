@@ -18,6 +18,10 @@ const UserSchema = new Schema({
         type: Number, 
         required: true 
     },
+    orders: { 
+        type: Schema.Types.ObjectId, 
+        ref: "Orders" 
+    },
     cart: { 
         type: Schema.Types.ObjectId, 
         ref: "Carts" 
@@ -32,4 +36,4 @@ const UserSchema = new Schema({
     }
 });
 
-export default model("User", UserSchema);
+export const userModel = model("User", UserSchema);

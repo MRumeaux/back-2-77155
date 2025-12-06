@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import express from "express";
 import { initMongoDB } from "./src/config/connect-mongo.js";
 import handlebars from "express-handlebars";
@@ -7,15 +6,19 @@ import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
 import passport from 'passport';
 import initializePassport from './src/config/passport.config.js';
-import userRouter from "./src/routes/user-router.js";
-import sessionRouter from "./src/routes/session-router.js";
-import viewsRouter from "./src/routes/views-router.js";
+// para deprecar
+import viewsRouter from "./src/routes/views.router.js";
+// para deprecar
+import userRoutes from "./src/routes/users.router.js";
+import orderRoutes from "./src/routes/orders.router.js";
+import businessRoutes from "./src/routes/business.router.js";
+import envs from './src/config/config.js';
+import { transporter } from "./src/middlewares/nodemailer.js";
 
 const app = express();
 
 //settings
-app.set("PORT", 8080);
-const secret = "secret123"
+app.set("PORT", envs.port);
 
 initMongoDB()
     .then(()=> console.log('Connected to MongoDB'))
@@ -33,10 +36,10 @@ app.set('view engine', 'handlebars');
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_LOCAL_URL,
+        mongoUrl: envs.URLMongo,
         ttl:600
     }),
-    secret,
+    secret: envs.secret,
     resave: false,
     saveUninitialized: false
 }));
@@ -46,12 +49,29 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-//enlace rutas + ejemplos
+//enlace rutas 
 
-app.use("/api/users", userRouter);
-app.use("/api/sessions", sessionRouter);
-app.use('/users', viewsRouter);
+app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/business", businessRoutes);
+// para deprecar
+app.use("/views", viewsRouter);
 
+// mail
+app.get("/mail", async ( req, res ) => {
+    // const {email} = req.body;
+    const {email} = req.query;
+    const result = await transporter.sendMail({
+        from:`Correo de prueba <${process.env.MAIL_USERNAME}>`,
+        to: email,
+        subject: "Correo de prueba",
+        html:`<div> 
+                <h1>Hola!</h1>
+                <p>Hola ${email}, te damos la bienvenida.</p>
+            </div>`
+    })
+    res.send({status:"success", message: "Mail enviado"});
+});
 
 // mid rutas inexistentes
 app.use( (req, res, next) => {

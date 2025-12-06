@@ -1,10 +1,11 @@
 import passport from "passport";
 import local from "passport-local";
-import userModel from "../models/user-model.js";
+import { UsersDAO } from "../dao/classes/users.dao.js";
 import { createHash, isValidPassword } from "../utils/index.js";
 import jwt from "passport-jwt";
+import envs from './config.js';
 
-const JWT_SECRET = "secretito123";
+//const JWT_SECRET = "secretito123";
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy, 
@@ -32,7 +33,7 @@ const initializePassport = () => {
                     console.log("Ingrese todos los campos necesarios para registrarse.");
                     return done(null, false);
                 }
-                const userExist = await userModel.findOne({email: username});
+                const userExist = await UsersDAO.findOne({email: username});
                 if(userExist){
                     console.log("El correo ya se encuentra registrado.");
                     return done(null, false);
@@ -45,7 +46,7 @@ const initializePassport = () => {
                     password: createHash(password)
                 };
                 
-                const user = await userModel.create(newUser);
+                const user = await UsersDAO.create(newUser);
                 return done(null, user);
                 } catch (error) {
                     return done(`Error interno al crear el usuario: ${error}`, false);
@@ -63,7 +64,7 @@ const initializePassport = () => {
                 console.log("Ingresar usuario y contraseña para loguearse.");
                 return done(null, false);
             }
-            const userExist = await userModel.findOne({email: username});
+            const userExist = await UsersDAO.findOne({email: username});
             if (!userExist){
                 console.log("No se encontró al usuario solicitado.");
                 return done(null, false);
@@ -84,7 +85,7 @@ const initializePassport = () => {
                     }
                 }
             } else {
-                console.log("Erro de credenciales");
+                console.log("Error de credenciales");
                 return done(null, false);
             }
             return done (null, userExist)
@@ -97,7 +98,7 @@ const initializePassport = () => {
 
     passport.use("jwt", new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: JWT_SECRET
+        secretOrKey: envs.passJWT
     },
     async(jwt_payload, done)=>{
         try {
@@ -112,7 +113,7 @@ const initializePassport = () => {
     });
 
     passport.deserializeUser(async(id, done) => {
-        const user = await userModel.findById(id);
+        const user = await UsersDAO.findById(id);
         done(null, user);
     })
 
