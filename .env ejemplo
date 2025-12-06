@@ -1,5 +1,5 @@
-PORT=8080
-SECRET_SESSION_MONGO = secret123
-JWT_SECRET = secretito123
-MONGO_LOCAL_URL=mongodb://127.0.0.1:27017/coderhouse-76500
-MONGO_ATLAS_URL=mongodb+srv://mrumeaux_db_user:admin@test-coderhouse.ovi3hw5.mongodb.net/?retryWrites=true&w=majority&appName=test-coderhouse
+PORT= #INGRESA PORT
+SECRET_SESSION_MONGO = #INGRESA SECRET SESSION MONGO
+JWT_SECRET = #SECRET JWT
+MONGO_LOCAL_URL= #URL MONGO LOCAL
+MONGO_ATLAS_URL= #URL MONGO ATLAS 
