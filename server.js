@@ -1,17 +1,13 @@
 import express from "express";
 import { initMongoDB } from "./src/config/connect-mongo.js";
-import handlebars from "express-handlebars";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
 import passport from 'passport';
 import initializePassport from './src/config/passport.config.js';
-// para deprecar
-import viewsRouter from "./src/routes/views.router.js";
-// para deprecar
 import userRoutes from "./src/routes/users.router.js";
-import orderRoutes from "./src/routes/orders.router.js";
-import businessRoutes from "./src/routes/business.router.js";
+import cartRoutes from "./src/routes/cart.router.js";
+import productRoutes from "./src/routes/product.router.js";
 import envs from './src/config/config.js';
 import { transporter } from "./src/middlewares/nodemailer.js";
 
@@ -28,11 +24,6 @@ initMongoDB()
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(`${process.cwd()}/src/public`))
-
-app.engine('handlebars', handlebars.engine());
-app.set('views', `${process.cwd()}/src/views`);
-app.set('view engine', 'handlebars');
 
 app.use(session({
     store: MongoStore.create({
@@ -52,10 +43,8 @@ app.use(passport.session());
 //enlace rutas 
 
 app.use("/api/users", userRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/business", businessRoutes);
-// para deprecar
-app.use("/views", viewsRouter);
+app.use("/api/cart", cartRoutes);
+app.use("/api/products", productRoutes);
 
 // mail
 app.get("/mail", async ( req, res ) => {
