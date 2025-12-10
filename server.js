@@ -43,24 +43,8 @@ app.use(passport.session());
 //enlace rutas 
 
 app.use("/api/users", userRoutes);
-app.use("/api/cart", cartRoutes);
+app.use("/api/carts", cartRoutes);
 app.use("/api/products", productRoutes);
-
-// mail
-app.get("/mail", async ( req, res ) => {
-    // const {email} = req.body;
-    const {email} = req.query;
-    const result = await transporter.sendMail({
-        from:`Correo de prueba <${process.env.MAIL_USERNAME}>`,
-        to: email,
-        subject: "Correo de prueba",
-        html:`<div> 
-                <h1>Hola!</h1>
-                <p>Hola ${email}, te damos la bienvenida.</p>
-            </div>`
-    })
-    res.send({status:"success", message: "Mail enviado"});
-});
 
 // mid rutas inexistentes
 app.use( (req, res, next) => {

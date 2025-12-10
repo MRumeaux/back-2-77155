@@ -2,7 +2,7 @@ PORT= # Puerto en el que se ejecuta el servidor
 SECRET_SESSION_MONGO= # Pass secret para la sesión almacenada en MongoDB
 JWT_SECRET= # Pass para firmar los tokens JWT
 MONGO_LOCAL_URL= # URL de conexión a MongoDB local
-MONGO_ATLAS_URL= mongodb+srv://mrumeaux_db_user:admin@test-coderhouse.ovi3hw5.mongodb.net/?retryWrites=true&w=majority&appName=test-coderhouse # URL de conexión a MongoDB Atlas
+MONGO_ATLAS_URL= # URL de conexión a MongoDB Atlas
 MAIL_USERNAME= # Usuario de la cuenta de correo para el servicio de email
 MAIL_PASSWORD= # Contraseña de la cuenta de correo para el servicio de email
 TWILIO_SID= # ID de Twilio

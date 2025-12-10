@@ -8,14 +8,14 @@ const router = Router();
 router.post("/register", registerAuth, UsersController.register);
 router.post("/login", loginAuth, UsersController.login);
 router.get("/current", jwtAuth, UsersController.current);
-router.get("/logout", UsersController.logout);
 
+router.post("/update", authenticateRole, UsersController.updatePassword);
 router.post("/forgot", UsersController.sendRecoveryMail);
 router.post("/reset", UsersController.resetPassword);
 
-// Solo admins
-router.post("/update", authenticateRole, authorizeRole("admin"), UsersController.updatePassword);
+router.get("/logout", UsersController.logout);
 
+// Solo admins
 router.get("/", authenticateRole, authorizeRole("admin"), UsersController.getUsers);
 router.get("/:uid", authenticateRole, authorizeRole("admin"), UsersController.getUserById);
 router.put("/:uid", authenticateRole, authorizeRole("admin"), UsersController.updateUser);
